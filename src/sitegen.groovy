@@ -7,11 +7,11 @@ import groovy.transform.ToString
 import java.nio.file.Path
 
 // configuration
-PROJECT_PATH = './site'
-GENERATION_PATH = PROJECT_PATH + '/html'
-CSS_PATH = PROJECT_PATH + '/assets/css'
-JS_PATH = PROJECT_PATH + '/assets/js'
-IMAGE_PATH = PROJECT_PATH + '/assets/img'
+PROJECT_PATH = './site-project'
+GENERATION_PATH = './site'
+CSS_PATH = GENERATION_PATH + '/assets/css'
+JS_PATH = GENERATION_PATH + '/assets/js'
+IMAGE_PATH = GENERATION_PATH + '/assets/img'
 PAGES_PATH = PROJECT_PATH + '/pages'
 TEMPLATES_PATH = PROJECT_PATH + '/templates'
 PAGE_FILE_EXTENSION = '.page'
@@ -33,7 +33,9 @@ def imagePath = imageDir.toPath()
 // start generation !
 def site = new Site();
 info = site.&info
-info 'Generatrion start...'
+info 'GEN DIR      :' + genDir
+info 'PAGES DIR    :' + pagesDir
+info 'TEMPLATE DIR :' + templatesDir
 
 // template files
 templatesDir.eachFileRecurse {

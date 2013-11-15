@@ -1,0 +1,12 @@
+name 'index'
+title 'ようこそ'
+template 'simple-template.html'
+
+contents '''\
+# 見出し1
+内容１
+## 見出し2
+内容２
+### 見出し3
+内容３
+'''

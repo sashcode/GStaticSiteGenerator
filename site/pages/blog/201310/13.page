@@ -1,0 +1,11 @@
+name 'StaticSiteGenerator'
+title 'Static Site Generator'
+template 'simple-template.html'
+contents '''\
+# 静的サイトジェネレーター Ver 0.1
+Groovy で静的サイトジェネレーターの作成を始めました
+### 機能
+・記事ファイル（.page）から HTMLファイル（.html）を生成
+・フォルダ階層に対応
+・独自MarkDownパーサー（#から始まる見出しのみ対応）
+'''

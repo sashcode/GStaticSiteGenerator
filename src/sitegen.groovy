@@ -14,10 +14,12 @@ JS_PATH = GENERATION_PATH + '/assets/js'
 IMAGE_PATH = GENERATION_PATH + '/assets/img'
 PAGES_PATH = PROJECT_PATH + '/pages'
 TEMPLATES_PATH = PROJECT_PATH + '/templates'
+SITE_FILE_EXTENSION = '.site'
 PAGE_FILE_EXTENSION = '.page'
 HTML_FILE_EXTENSION = '.html'
 
 // dirs
+def projectDir = new File(PROJECT_PATH)
 def genDir = new File(GENERATION_PATH)
 def pagesDir = new File(PAGES_PATH)
 def templatesDir = new File(TEMPLATES_PATH)
@@ -36,6 +38,16 @@ info = site.&info
 info 'GEN DIR      :' + genDir
 info 'PAGES DIR    :' + pagesDir
 info 'TEMPLATE DIR :' + templatesDir
+
+// site file
+projectDir.eachFile { file ->
+    if(file.name.endsWith(SITE_FILE_EXTENSION)){
+        name = site.&name
+        // evaluate .site file
+        evaluate(file)
+        site.file = file
+    }
+}
 
 // template files
 templatesDir.eachFileRecurse {
@@ -71,6 +83,7 @@ engine = new SimpleTemplateEngine()
 site.pages.each {
     File file = it.templateFile
     if(file==null){return};
+    enginebinding['site'] = site
     enginebinding['page'] = it
 
     template = engine.createTemplate(file.text).make(enginebinding)
@@ -100,6 +113,8 @@ info 'Generatrion end'
 
 // classes
 class Site{
+    def siteName
+    File file
     def List<Page> pages =[]
     def Map<String , File> templateFiles = [:]
     def addPage(Page p){
@@ -107,6 +122,12 @@ class Site{
     }
     def info(Object message){
         println '[SITE GEN INFO] ' + message.toString()
+    }
+    def name(String text){
+        this.siteName = text
+    }
+    String getName(){
+        this.siteName
     }
 }
 

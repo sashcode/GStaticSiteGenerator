@@ -7,15 +7,18 @@ import groovy.transform.ToString
 import java.nio.file.Path
 
 // configuration
-PROJECT_PATH = './site-project'
 GENERATION_PATH = './site'
 CSS_PATH = GENERATION_PATH + '/assets/css'
 JS_PATH = GENERATION_PATH + '/assets/js'
 IMAGE_PATH = GENERATION_PATH + '/assets/img'
+
+PROJECT_PATH = './site-project'
 PAGES_PATH = PROJECT_PATH + '/pages'
 TEMPLATES_PATH = PROJECT_PATH + '/templates'
+PLUGINS_PATH = PROJECT_PATH + '/plugins'
 SITE_FILE_EXTENSION = '.site'
 PAGE_FILE_EXTENSION = '.page'
+PLUGIN_FILE_EXTENSION = '.groovy'
 HTML_FILE_EXTENSION = '.html'
 
 // dirs
@@ -23,6 +26,7 @@ def projectDir = new File(PROJECT_PATH)
 def genDir = new File(GENERATION_PATH)
 def pagesDir = new File(PAGES_PATH)
 def templatesDir = new File(TEMPLATES_PATH)
+def pluginsDir = new File(PLUGINS_PATH)
 def cssDir = new File(CSS_PATH)
 def jsDir = new File(JS_PATH)
 def imageDir = new File(IMAGE_PATH)
@@ -39,6 +43,17 @@ info 'GEN DIR      :' + genDir
 info 'PAGES DIR    :' + pagesDir
 info 'TEMPLATE DIR :' + templatesDir
 
+Plugins plugins = new Plugins();
+
+// plugins file
+pluginsDir.eachFileRecurse { file ->
+    if(file.name.endsWith(PLUGIN_FILE_EXTENSION)){
+        pluginMarkDownConverter = plugins.&pluginMarkDownConverter
+        // evaluate plugin file
+        evaluate(file)
+    }
+}
+
 // site file
 projectDir.eachFile { file ->
     if(file.name.endsWith(SITE_FILE_EXTENSION)){
@@ -54,11 +69,12 @@ templatesDir.eachFileRecurse {
     site.templateFiles[it.getName()] = it
 }
 
+
 // create pages
 info('read pages...')
 pagesDir.eachFileRecurse{  file ->
     if(file.name.endsWith(PAGE_FILE_EXTENSION)){
-        
+
         println file
 
         // create Page Object
@@ -66,12 +82,16 @@ pagesDir.eachFileRecurse{  file ->
         name = page.&name
         title = page.&title
         template = page.&template
+        markdown = page.&markdown
         contents = page.&contents
         // evaluate .page file
         evaluate(file)
         page.date = new Date(file.lastModified())
-        def logic = new MarkDownConverter();
-        page.converter = logic.&toHTML
+        Closure cl = plugins.markDownConverters[page.markdown]
+        if(cl == null){
+            cl = plugins.defaultMarkDownConverter
+        }
+        page.converter = cl
         site.addPage(page)
     }
 }
@@ -138,6 +158,7 @@ class Page{
     String pageTitle
     String pageContents
     String pageTemplate
+    String pageMarkDown
     File file
     Date date
     def converter
@@ -157,7 +178,12 @@ class Page{
     def template(String text){
         this.pageTemplate = text
     }
-
+    def markdown(String text){
+        this.pageMarkDown = text
+    }
+    String getMarkdown(){
+        this.pageMarkDown
+    }
     File getTemplateFile(){
         if(pageTemplate == null){return null}
         File f = site.templateFiles[pageTemplate]
@@ -182,27 +208,15 @@ class Page{
     }
 }
 
-class MarkDownConverter{
-    StringBuffer html
 
-    def String toHTML(String markdown){
-        html = new StringBuffer()
-        markdown.eachLine { line ->
-            String sharps = line.find(/^#+ /);
-            if(sharps != null){
-                def sharpSize = sharps.trim().size()
-                def contents = line.replaceAll(/^#+\s*|\s*#+$/, '').trim()
-                addHtml ("<h${sharpSize}>" + contents +"</h${sharpSize}>")
-            }else{
-                addHtml ("<div>" + line +"</div>")
-            }
-            if(line.startsWith(/^#+/)){ addHeader(line)}
+class Plugins{
+    def markDownConverters = [:]
+    def defaultMarkDownConverter
+    def pluginMarkDownConverter(String id , Closure cl){
+        markDownConverters[id] = cl
+        if(defaultMarkDownConverter == null){
+            defaultMarkDownConverter = cl
         }
-        return html.toString()
-    }
-
-    def addHtml(String text){
-        html.append(text).append('\n');
     }
 
 }

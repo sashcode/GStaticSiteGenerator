@@ -1,7 +1,7 @@
 name 'index'
 title 'ようこそ'
 template 'simple-template.html'
-
+markdown 'simple'
 contents '''\
 # 見出し1
 内容１

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Processing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="../../assets/css/bootstrap.css" rel="stylesheet">
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+    <link href="../../assets/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../../assets/js//html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+                    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+                                   <link rel="shortcut icon" href="../assets/ico/favicon.png">
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">Sample Project</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+    <script type="application/processing">
+int xspacing = 8;   // How far apart should each horizontal location be spaced
+int w;              // Width of entire wave
+int maxwaves = 4;   // total # of waves to add together
+
+float theta = 0.0f;
+float[] amplitude = new float[maxwaves];   // Height of wave
+float[] dx = new float[maxwaves];          // Value for incrementing X, to be calculated as a function of period and xspacing
+float[] yvalues;                           // Using an array to store height values for the wave (not entirely necessary)
+
+void setup() {
+  size(200,200);
+  frameRate(30);
+  colorMode(RGB,255,255,255,100);
+  smooth();
+  w = width+16;
+
+  for (int i = 0; i < maxwaves; i++) {
+    amplitude[i] = random(10,30);
+    float period = random(100,300); // How many pixels before the wave repeats
+    dx[i] = (TWO_PI / period) * xspacing;
+  }
+
+  yvalues = new float[w/xspacing];
+}
+
+void draw() {
+  background(0);
+  calcWave();
+  renderWave();
+}
+
+void calcWave() {
+  // Increment theta (try different values for 'angular velocity' here
+  theta += 0.02;
+
+  // Set all height values to zero
+  for (int i = 0; i < yvalues.length; i++) {
+    yvalues[i] = 0.0f;
+  }
+ 
+  // Accumulate wave height values
+  for (int j = 0; j < maxwaves; j++) {
+    float x = theta;
+    for (int i = 0; i < yvalues.length; i++) {
+      // Every other wave is cosine instead of sine
+      if (j % 2 == 0)  yvalues[i] += sin(x)*amplitude[j];
+      else yvalues[i] += cos(x)*amplitude[j];
+      x+=dx[j];
+    }
+  }
+}
+
+void renderWave() {
+  // A simple way to draw the wave with an ellipse at each location
+  noStroke();
+  fill(255,50);
+  ellipseMode(CENTER);
+  for (int x = 0; x < yvalues.length; x++) {
+    ellipse(x*xspacing,width/2+yvalues[x],16,16);
+  }
+}
+
+
+</script>
+<canvas width="200" height="200"></canvas>
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../../assets/js/jquery.js"></script>
+    <script src="../../assets/js/bootstrap-transition.js"></script>
+    <script src="../../assets/js/bootstrap-alert.js"></script>
+    <script src="../../assets/js/bootstrap-modal.js"></script>
+    <script src="../../assets/js/bootstrap-dropdown.js"></script>
+    <script src="../../assets/js/bootstrap-scrollspy.js"></script>
+    <script src="../../assets/js/bootstrap-tab.js"></script>
+    <script src="../../assets/js/bootstrap-tooltip.js"></script>
+    <script src="../../assets/js/bootstrap-popover.js"></script>
+    <script src="../../assets/js/bootstrap-button.js"></script>
+    <script src="../../assets/js/bootstrap-collapse.js"></script>
+    <script src="../../assets/js/bootstrap-carousel.js"></script>
+    <script src="../../assets/js/bootstrap-typeahead.js"></script>
+    <script src="../../assets/js/processing-1.4.1.min.js"></script>
+  </body>
+</html>

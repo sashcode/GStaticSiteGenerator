@@ -1,5 +1,5 @@
 
-pluginMarkDownConverter('simple markdown' , new MarkDownConverter().&toHTML);
+pluginMarkDownConverter('simple' , new MarkDownConverter().&toHTML);
 
 
 class MarkDownConverter{

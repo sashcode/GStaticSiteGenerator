@@ -1,3 +1,8 @@
-# GStatic Site Generator
-Version 0.1
+# Groovy Static Site Generator
+
+Example
+
+site-project
+
+site
 

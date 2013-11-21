@@ -1,6 +1,7 @@
 name 'StaticSiteGenerator'
 title 'Static Site Generator'
 template 'simple-template.html'
+markdown 'simple'
 contents '''\
 # 静的サイトジェネレーター Ver 0.1
 Groovy で静的サイトジェネレーターの作成を始めました

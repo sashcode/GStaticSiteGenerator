@@ -111,25 +111,11 @@ site.pages.each {
     template = engine.createTemplate(file.text).make(enginebinding)
 
     String pagePath = it.file.getPath()
-	
-	
-	println '---'
-	println it.file
-	
-	
 	Path pdirPath = pagesDir.toPath()
 	Path genPath = genDir.toPath()
 	Path pPath = it.file.toPath()
-	
-	println 'a ' + pdirPath
-	println 'b ' + genPath
-	println 'c ' + pPath
 	Path relativePages = pdirPath.relativize(pPath)
 	Path pageGenPath = new File(genPath.toString() + '/' + relativePages.toString()).toPath()
-	
-	println 'd ' + relativePages
-	println 'e ' + pageGenPath
-
 	
 	pagePath = pageGenPath.toString();
     pagePath = pagePath.replaceFirst(PAGE_FILE_EXTENSION + '$' , HTML_FILE_EXTENSION)

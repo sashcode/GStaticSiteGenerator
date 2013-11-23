@@ -3,10 +3,12 @@ title 'ようこそ'
 template 'simple-template.html'
 markdown 'simple'
 contents '''\
-# 見出し1
-内容１
-## 見出し2
-内容２
-### 見出し3
-内容３
+# Groovy Static Site Generator
+Groovyで作られた静的サイト生成ツールです。
+
+このサイトはGroovy Static Site Generator で管理されています。
+
+## 機能
+・記事ファイル（.page）から HTMLファイル（.html）を生成
+・フォルダ階層に対応
 '''

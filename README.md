@@ -1,8 +1,4 @@
 # Groovy Static Site Generator
 
-Example
-
-site-project
-
-site
-
+github pages
+http://sashcode.github.io/GStaticSiteGenerator/

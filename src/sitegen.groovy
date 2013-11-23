@@ -7,10 +7,12 @@ import groovy.transform.ToString
 import java.nio.file.Path
 
 // configuration
-GENERATION_PATH = './site'
+GENERATION_PATH = './'
 CSS_PATH = GENERATION_PATH + '/assets/css'
 JS_PATH = GENERATION_PATH + '/assets/js'
 IMAGE_PATH = GENERATION_PATH + '/assets/img'
+
+CHARSET = 'UTF-8'
 
 PROJECT_PATH = './site-project'
 PAGES_PATH = PROJECT_PATH + '/pages'
@@ -85,7 +87,7 @@ pagesDir.eachFileRecurse{  file ->
         markdown = page.&markdown
         contents = page.&contents
         // evaluate .page file
-        evaluate(file)
+        evaluate(file.getText(CHARSET))
         page.date = new Date(file.lastModified())
         Closure cl = plugins.markDownConverters[page.markdown]
         if(cl == null){
@@ -109,7 +111,27 @@ site.pages.each {
     template = engine.createTemplate(file.text).make(enginebinding)
 
     String pagePath = it.file.getPath()
-    pagePath = pagePath.replaceFirst('^' + PAGES_PATH, GENERATION_PATH)
+	
+	
+	println '---'
+	println it.file
+	
+	
+	Path pdirPath = pagesDir.toPath()
+	Path genPath = genDir.toPath()
+	Path pPath = it.file.toPath()
+	
+	println 'a ' + pdirPath
+	println 'b ' + genPath
+	println 'c ' + pPath
+	Path relativePages = pdirPath.relativize(pPath)
+	Path pageGenPath = new File(genPath.toString() + '/' + relativePages.toString()).toPath()
+	
+	println 'd ' + relativePages
+	println 'e ' + pageGenPath
+
+	
+	pagePath = pageGenPath.toString();
     pagePath = pagePath.replaceFirst(PAGE_FILE_EXTENSION + '$' , HTML_FILE_EXTENSION)
 
     File toFile = new File(pagePath)
@@ -121,7 +143,7 @@ site.pages.each {
     enginebinding['img']=patn.relativize(imagePath)
 
     toFile.getParentFile().mkdirs()
-    toFile.write(template.toString())
+    toFile.write(template.toString() , CHARSET)
     println toFile
 }
 
